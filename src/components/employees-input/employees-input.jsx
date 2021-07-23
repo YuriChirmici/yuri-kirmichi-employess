@@ -52,7 +52,7 @@ const EmployeesInput = (props) => {
 		e.preventDefault();
 
 		let reader = new FileReader();
-		let file = fileRef.current.files[0];
+		let file = e.target.files[0];
 
 		if (file) {
 			reader.readAsText(file);
@@ -74,8 +74,6 @@ const EmployeesInput = (props) => {
 		}
 	}
 		
-
-	const fileRef = React.createRef();
 	const outputData = (employeesData && !isError) ? 
 			<EmployeesPair employeesData={employeesData} /> : 
 			null;
@@ -83,7 +81,6 @@ const EmployeesInput = (props) => {
 	return (
 		<div className="employees">
 			<UploadForm 
-				fileRef={fileRef}
 				handleInputChange={handleInputChange}
 			/>
 			{ outputData }
@@ -101,18 +98,9 @@ const UploadForm = (props) => {
 				<input 
 					type="file" 
 					name="sendEmployees"
-					ref={props.fileRef}
+					onChange={props.handleInputChange}
 				/>
 			</div>
-
-			<Button 
-				className="upload__button"
-				variant="contained" 
-				color="primary" 
-				onClick={props.handleInputChange}
-			>
-				Get Pair
-			</Button>
 		</form>
 	)
 }
