@@ -53,44 +53,44 @@ const EmployeesPair = (props) => {
 			let maxPair = null;
 
 			//we can find the pair if we have more then 1 employee
-			if (projects[key].length > 1) {
-				for (let i = 0; i < projects[key].length - 1; i++) {
-					for (let j = i + 1; j < projects[key].length; j++) {
-						//comparation each 2 employees in current project
-						const currentFrom = formatDate(projects[key][i].dateFrom);
-						const currentTo = formatDate(projects[key][i].dateTo);
-						const currentID = projects[key][i].empID;
+			if (projects[key].length < 2) continue;
+			for (let i = 0; i < projects[key].length - 1; i++) {
+				for (let j = i + 1; j < projects[key].length; j++) {
+					//comparation each 2 employees in current project
+					const currentFrom = formatDate(projects[key][i].dateFrom);
+					const currentTo = formatDate(projects[key][i].dateTo);
+					const currentID = projects[key][i].empID;
 
-						const nextFrom = formatDate(projects[key][j].dateFrom);
-						const nextTo = formatDate(projects[key][j].dateTo);
-						const nextID = projects[key][j].empID;
+					const nextFrom = formatDate(projects[key][j].dateFrom);
+					const nextTo = formatDate(projects[key][j].dateTo);
+					const nextID = projects[key][j].empID;
 
-						const projectID = projects[key][i].projectID;
+					const projectID = projects[key][i].projectID;
 
-						//calculating number of days worked together
-						const daysWorked = datesIntersection(
-								[currentFrom, currentTo], [nextFrom, nextTo]);
+					//calculating number of days worked together
+					const daysWorked = datesIntersection(
+							[currentFrom, currentTo], [nextFrom, nextTo]);
 
-						const employeesPair = {
-							empID1: currentID, 
-							empID2: nextID, 
-							projectID,
-							daysWorked
-						}
+					const employeesPair = {
+						empID1: currentID, 
+						empID2: nextID, 
+						projectID,
+						daysWorked
+					}
 
-						if (maxPair) {
-							//if the maximal pair exists, we compare the number of days
-							if (maxPair.daysWorked < daysWorked) {
-								maxPair = {...employeesPair}
-							}
-						} 
-						else {
-							//else the current pair becomes the maximum without checking
+					if (maxPair) {
+						//if the maximal pair exists, we compare the number of days
+						if (maxPair.daysWorked < daysWorked) {
 							maxPair = {...employeesPair}
 						}
+					} 
+					else {
+						//else the current pair becomes the maximum without checking
+						maxPair = {...employeesPair}
 					}
 				}
 			}
+			
 			//if this project has maximal pair, we add it to an array
 			if (maxPair) {
 				projectsMaxPairs.push(maxPair);

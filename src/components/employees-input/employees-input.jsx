@@ -78,6 +78,7 @@ const EmployeesInput = (props) => {
 			<EmployeesPair employeesData={employeesData} /> : 
 			null;
 	const errorMsg = (isError) ? <ErrorMessage /> : null;
+
 	return (
 		<div className="employees">
 			<UploadForm 
@@ -88,7 +89,6 @@ const EmployeesInput = (props) => {
 		</div>
 	)
 }
-
 
 const UploadForm = (props) => {
 	return (

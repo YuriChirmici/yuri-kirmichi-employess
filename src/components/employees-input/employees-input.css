@@ -4,13 +4,16 @@
 }
 
 .upload__form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	max-width: 400px;
 	margin: 0 auto 70px;
-
 }
 
 .upload__file {
 	margin-bottom: 25px;
+	
 }
 
 .upload__file h3 {
