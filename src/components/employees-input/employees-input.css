@@ -1,0 +1,29 @@
+.employees {
+	max-width: 800px;
+	margin: 100px auto 0;
+}
+
+.upload__form {
+	max-width: 400px;
+	margin: 0 auto 70px;
+
+}
+
+.upload__file {
+	margin-bottom: 25px;
+}
+
+.upload__file h3 {
+	margin-bottom: 16px;
+}
+
+.upload__button {
+	display: inline-block;
+	width: 100%;
+	height: 40px;
+	margin: 0 auto;
+}
+
+.error__message {
+	text-align: center;
+}
