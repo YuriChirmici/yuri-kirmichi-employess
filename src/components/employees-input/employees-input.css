@@ -1,6 +1,6 @@
 .employees {
 	max-width: 800px;
-	margin: 100px auto 0;
+	margin: 60px auto 0;
 }
 
 .upload__form {
@@ -8,7 +8,7 @@
 	flex-direction: column;
 	align-items: center;
 	max-width: 400px;
-	margin: 0 auto 70px;
+	margin: 0 auto 50px;
 }
 
 .upload__file {

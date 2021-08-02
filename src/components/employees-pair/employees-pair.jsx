@@ -53,7 +53,9 @@ const EmployeesPair = (props) => {
 				const nextFrom = formatDate(arr[j].dateFrom);
 				const nextTo = formatDate(arr[j].dateTo);
 				
+				//skip invalid data
 				if (currentProjectID !== nextProjectID) continue;
+				if (currentFrom >  currentTo || nextFrom > nextTo) continue;
 
 				//calculating number of days worked together
 				const daysWorked = datesIntersection(
@@ -144,7 +146,7 @@ const EmployeesTable = ({ rows, columns }) => {
 			<DataGrid
 				rows={rows}
 				columns={columns}
-				pageSize={8}
+				pageSize={6}
 				checkboxSelection
 				disableSelectionOnClick
 			/>
