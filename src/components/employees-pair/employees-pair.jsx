@@ -53,14 +53,16 @@ const EmployeesPair = (props) => {
 				const nextFrom = formatDate(arr[j].dateFrom);
 				const nextTo = formatDate(arr[j].dateTo);
 				
-				//skip invalid data
-				if (currentProjectID !== nextProjectID) continue;
-				if (currentFrom >  currentTo || nextFrom > nextTo) continue;
+				
 
 				//calculating number of days worked together
 				const daysWorked = datesIntersection(
 						[currentFrom, currentTo], [nextFrom, nextTo]);
+
+				//skip invalid data
 				if (daysWorked < 1) continue;
+				if (currentProjectID !== nextProjectID) continue;
+				if (currentFrom >  currentTo || nextFrom > nextTo) continue;
 
 				const key1 = `${currentID}-${nextID}`;
 				const key2 = `${nextID}-${currentID}`;
