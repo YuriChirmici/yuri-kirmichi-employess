@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import EmployeesPair from '../employees-pair/'
 import './employees-input.css';
-import Button from '@material-ui/core/Button';
 
 const EmployeesInput = (props) => {
 
@@ -34,9 +33,9 @@ const EmployeesInput = (props) => {
 
 		//array of objects with employee info
 		return employees.map( row => {
-			let [ empID, projectID, dateFrom, dateTo] = row.split(', ');
-			dateTo = (dateTo.toLowerCase() !== 'null') ? 
-				dateTo : 
+			let [ empID, projectID, dateFrom, dateTo] = row.split(',');
+			dateTo = (dateTo.trim().toLowerCase() !== 'null') ? 
+				dateTo.trim() : 
 				getCurrentDate();
 
 			return { 

@@ -4,10 +4,16 @@ import './employees-pair.css';
 
 const EmployeesPair = (props) => {
 
+	const replaceAll = (str, search, replace) => {
+		return str.split(search).join(replace);
+	}
+
 	const formatDate = (date) => {
-		// format something like "2021-07-13" to milliseconds
+		// format something like "2021-07-13" to Date
+		date = replaceAll(date, '−', '-')
+		date = replaceAll(date, '–', '-')
 		let t1 = date.split('-').map(el => +el);
-		return new Date(t1[0], t1[1], t1[2])
+		return new Date(t1[0], t1[1] - 1, t1[2])
 	}
 
 	const dateDifference = (d1, d2) => {
@@ -33,98 +39,100 @@ const EmployeesPair = (props) => {
 	}
 
 	const getPair = (arr) => {
+		const pairs = {};
+		for (let i = 0; i < arr.length - 1; i++) {
+			for (let j = i + 1; j < arr.length; j++) {
+				//comparation each 2 employees
+				const currentID = arr[i].empID;
+				const currentProjectID = arr[i].projectID;
+				const currentFrom = formatDate(arr[i].dateFrom);
+				const currentTo = formatDate(arr[i].dateTo);
 
-		//divided information about workers by project id
-		//created an array where will be shown the pair with the 
-		//maximum days of work together(if it exists) of each project
-		const projects = {};
-		arr.forEach( el => {
-			if (el.projectID in projects) {
-				projects[el.projectID].push(el);
-			}
-			else {
-				projects[el.projectID] = [el];
-			}
-		})
+				const nextID = arr[j].empID;
+				const nextProjectID = arr[j].projectID;
+				const nextFrom = formatDate(arr[j].dateFrom);
+				const nextTo = formatDate(arr[j].dateTo);
+				
+				if (currentProjectID !== nextProjectID) continue;
 
-		const projectsMaxPairs = []
+				//calculating number of days worked together
+				const daysWorked = datesIntersection(
+						[currentFrom, currentTo], [nextFrom, nextTo]);
+				if (daysWorked < 1) continue;
 
-		for (let key in projects) {
-			let maxPair = null;
+				const key1 = `${currentID}-${nextID}`;
+				const key2 = `${nextID}-${currentID}`;
+				const key = (key2 in pairs) ? key2 : key1;
 
-			//we can find the pair if we have more then 1 employee
-			if (projects[key].length < 2) continue;
-			for (let i = 0; i < projects[key].length - 1; i++) {
-				for (let j = i + 1; j < projects[key].length; j++) {
-					//comparation each 2 employees in current project
-					const currentFrom = formatDate(projects[key][i].dateFrom);
-					const currentTo = formatDate(projects[key][i].dateTo);
-					const currentID = projects[key][i].empID;
+				if (key in pairs) {
+					pairs[key].daysWorked += daysWorked;
+					pairs[key].projectIDS.push({ projectID: currentProjectID, daysWorked });
 
-					const nextFrom = formatDate(projects[key][j].dateFrom);
-					const nextTo = formatDate(projects[key][j].dateTo);
-					const nextID = projects[key][j].empID;
-
-					const projectID = projects[key][i].projectID;
-
-					//calculating number of days worked together
-					const daysWorked = datesIntersection(
-							[currentFrom, currentTo], [nextFrom, nextTo]);
-
-					const employeesPair = {
-						empID1: currentID, 
-						empID2: nextID, 
-						projectID,
+				} 
+				else {
+					pairs[key] = {
+						empID1: currentID,
+						empID2: nextID,
+						projectIDS: [{ projectID: currentProjectID, daysWorked }],
 						daysWorked
-					}
-
-					if (maxPair) {
-						//if the maximal pair exists, we compare the number of days
-						if (maxPair.daysWorked < daysWorked) {
-							maxPair = {...employeesPair}
-						}
-					} 
-					else {
-						//else the current pair becomes the maximum without checking
-						maxPair = {...employeesPair}
-					}
+					};
 				}
 			}
-			
-			//if this project has maximal pair, we add it to an array
-			if (maxPair) {
-				projectsMaxPairs.push(maxPair);
-			}
 		}
-
-		//if the list of maximum pairs of each project is not empty
-		//we search for the maximal of them
-		if (projectsMaxPairs.length === 0) {
+		
+		if (Object.keys(pairs).length === 0) {
 			return null;
 		} 
 		else {
-			return projectsMaxPairs.reduce((max, pair) => {
-				return (pair.daysWorked > max.daysWorked) ? pair : max;
-			}, {...projectsMaxPairs[0]});
+			let maxPair = {daysWorked: 0};
+			for (let key in pairs) {
+				if (pairs[key].daysWorked >= maxPair.daysWorked) {
+					maxPair = pairs[key];
+				}
+			}
+			return maxPair;
 		}
 	}
 
+	const getTable = (employeesData) => {
+
+		const { empID1: id1, empID2: id2, projectIDS } = employeesData;
+
+		const columns = [
+			{ field: 'id', headerName: 'ID', width: 60, hide: true},
+			{ field: 'id1', headerName: 'Employee ID #1', width: 180},
+			{ field: 'id2', headerName: 'Employee ID #2', width: 180 },
+			{ field: 'projectID', headerName: 'Project ID', width: 180 },
+			{ field: 'days', headerName: 'Days worked', width: 180 },
+		].map(col => ({...col, sortable: false, filterable: false}));
+
+		const rows = projectIDS.map( (project, index) => {
+			return { 
+				id: index, 
+				id1, 
+				id2, 
+				projectID: project.projectID, 
+				days: project.daysWorked 
+			}
+		});
+		return { rows, columns }
+	}
+
 	const employeesData = getPair(props.employeesData);
-	const {empID1: id1, empID2: id2, projectID, 
-	daysWorked: days} = employeesData;
+	let content;
 
-	const columns = [
-		{ field: 'id', headerName: 'ID', width: 60, hide: true},
-		{ field: 'id1', headerName: 'Employee ID #1', width: 180},
-		{ field: 'id2', headerName: 'Employee ID #2', width: 180 },
-		{ field: 'projectID', headerName: 'Project ID', width: 180 },
-		{ field: 'days', headerName: 'Days worked', width: 180 },
-	].map(col => ({...col, sortable: false, filterable: false}));
-
-	const rows = [{ id: 1, id1, id2, projectID, days }];
-
+	if (employeesData) {
+		const { rows, columns } = getTable(employeesData);
+		content = <EmployeesTable columns={columns}	rows={rows}/>
+	}
+	else {
+		content = <h3>This file doesn't have a pair of employees matching the condition</h3>
+	}
+	
 	return (
-		<EmployeesTable columns={columns}	rows={rows}/>
+		<>
+			{ content }
+		</>
 	)
 }
 
@@ -136,7 +144,7 @@ const EmployeesTable = ({ rows, columns }) => {
 			<DataGrid
 				rows={rows}
 				columns={columns}
-				pageSize={5}
+				pageSize={8}
 				checkboxSelection
 				disableSelectionOnClick
 			/>
