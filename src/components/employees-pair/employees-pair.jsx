@@ -52,8 +52,6 @@ const EmployeesPair = (props) => {
 				const nextProjectID = arr[j].projectID;
 				const nextFrom = formatDate(arr[j].dateFrom);
 				const nextTo = formatDate(arr[j].dateTo);
-				
-				
 
 				//calculating number of days worked together
 				const daysWorked = datesIntersection(
